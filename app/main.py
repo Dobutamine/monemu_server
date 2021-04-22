@@ -22,8 +22,8 @@ app.add_middleware(
 
 @app.post("/getdata")
 async def getdata():
-    return { "error": "error getting data"}
+    return { "error": "error getting tada"}
 
 @app.post("/setdata")
 async def setdata():
-    return { "error": "error setting data"}
+    return { "error": "error setting tada"}
