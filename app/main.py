@@ -88,7 +88,7 @@ async def getdata(reqId: ReqIdModel):
         return emulators[reqId.id]
     else:
         print("requesting data not found for id: ", reqId.id)
-        return default_response_object
+        return {"error": "id not found"}
 
 @app.post("/setdata")
 async def setdata(newdata: DataModel):
@@ -110,4 +110,5 @@ async def setdata(newdata: DataModel):
         print("new data set for id: ", newObject['id'])
         return {"new data set"}
     else:
-        return { "error": "error setting new data"}
+        print("error setting new data for id: ", newdata.id)
+        return { "error": "id not found"}
