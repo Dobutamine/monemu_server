@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
+import random
+
 
 app = FastAPI()
 
@@ -59,13 +61,17 @@ async def removeId(reqId: ReqIdModel):
     print("removing id", reqId.id)
     if reqId.id in emulators.keys():
         del emulators[reqId.id]
-    return {'OK'}
+        return {reqId.id}
+    else:
+        return {"error": "id not found"}
 
 @app.post("/reqid")
-async def reqId(reqId: ReqIdModel):
+async def reqId():
+    newid = str(random.randint(1000,9999))
+
     newObject = {
         'error': '',
-        'id': reqId.id,
+        'id': newid,
         'hr': 150,
         'sat_pre': 100,
         'sat_post': 100,
@@ -76,9 +82,9 @@ async def reqId(reqId: ReqIdModel):
         'abp_syst': 75,
         'abp_diast': 5
     }
-    emulators[reqId.id] = newObject
-    print("registrating new id: ", reqId.id)
-    return {'OK'}
+    emulators[newid] = newObject
+    print("registrating new id: ", newid)
+    return {newid}
 
 @app.post("/getdata")
 async def getdata(reqId: ReqIdModel):
