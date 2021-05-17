@@ -54,7 +54,21 @@ default_response_object = {
     'abp_diast': 50
 }
 
-emulators = {}
+emulators = {
+    'YODA': {
+        'error': '',
+        'id': '2412',
+        'hr': 120,
+        'sat_pre': 98,
+        'sat_post': 95,
+        'resp_rate': 30,
+        'etco2': 4.5,
+        'pfi': 1.5,
+        'temp': 37.6,
+        'abp_syst': 70,
+        'abp_diast': 50
+    }   
+}
 
 @app.post("/removeid")
 async def removeId(reqId: ReqIdModel):
@@ -65,13 +79,11 @@ async def removeId(reqId: ReqIdModel):
     else:
         return {"error": "id not found"}
 
-@app.post("/reqid")
-async def reqId():
-    newid = str(random.randint(1000,9999))
-
+@app.post("/regid")
+async def regId(regId: ReqIdModel):
     newObject = {
         'error': '',
-        'id': newid,
+        'id': regId.id,
         'hr': 150,
         'sat_pre': 100,
         'sat_post': 100,
@@ -82,9 +94,9 @@ async def reqId():
         'abp_syst': 75,
         'abp_diast': 5
     }
-    emulators[newid] = newObject
-    print("registrating new id: ", newid)
-    return {newid}
+    emulators[regId.id] = newObject
+    print("registrating new id: ", regId.id)
+    return {"OK"}
 
 @app.post("/getdata")
 async def getdata(reqId: ReqIdModel):
