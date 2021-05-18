@@ -10,9 +10,12 @@ app = FastAPI()
 origins = [
     "http://localhost",
     "http://localhost:8080",
+    "http://localhost:8081",
     "http://monitoremulator.com",
     "http://monitoremulator.com:8080",
+    "http://monitoremulator.com:8081",
     "http://www.monitoremulator.com",
+    "http://www.monitoremulator.com:8080",
     "http://www.monitoremulator.com:8080"
 ]
 
