@@ -16,7 +16,11 @@ origins = [
     "http://monitoremulator.com:8081",
     "http://www.monitoremulator.com",
     "http://www.monitoremulator.com:8080",
-    "http://www.monitoremulator.com:8080"
+    "http://www.monitoremulator.com:8080",
+    "http://104.248.90.19",
+    "http://104.248.90.19:80",
+    "http://104.248.90.19:8080",
+    "http://104.248.90.19:8081",
 ]
 
 app.add_middleware(
