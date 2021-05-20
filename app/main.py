@@ -35,6 +35,7 @@ class ReqIdModel(BaseModel):
 
 class DataModel(BaseModel):
     id: str
+    error: str
     heartrate: float
     satPre: float
     satPost: float
@@ -68,14 +69,53 @@ class DataModel(BaseModel):
     papEnabled: bool
     alarmEnabled: bool
 
-emulators = {}
+yoda_object = {
+    'id': 'YODA',
+    'error': '',
+    'heartrate': 120,
+    'satPre': 100,
+    'satPost': 96,
+    'satVen': 80,
+    'respRate': 35,
+    'etco2': 45,
+    'abpSyst': 70,
+    'abpDiast': 50,
+    'pfi': 1.2,
+    'temp': 37.1,
+    'cvp': 4,
+    'papSyst': 40,
+    'papDiast': 20,
+    'imageNo': 0,
+    'resusState': 0,
+    'rhythmType': 0,
+    'rhythmParameter': 0,
+    'curveSqueeze': 1,
+    'hrEnabled': True,
+    'satPreEnabled': True,
+    'satPostEnabled': True,
+    'satVenEnabled': False,
+    'abpEnabled': True,
+    'respRateEnabeld': True,
+    'etco2Enabled': True,
+    'tempEnabled': True,
+    'polsEnabled': True,
+    'pfiEnabled': True,
+    'nibdEnabled': False,
+    'cvpEnabled': False,
+    'papEnabled': False,
+    'alarmEnabled': True
+}
+
+
+emulators = {
+    'YODA': yoda_object
+}
 
 @app.post("/removeid")
 async def removeId(reqId: ReqIdModel):
-    print("removing id", reqId.id)
     if reqId.id in emulators.keys():
         del emulators[reqId.id]
-        return {reqId.id}
+        return {"OK"}
     else:
         return {"error": "id not found"}
 
@@ -87,7 +127,6 @@ async def regId(regId: ReqIdModel):
 
 @app.post("/getdata")
 async def getdata(reqId: ReqIdModel):
-    print("requesting data from id: ", reqId.id)
     if reqId.id in emulators.keys():
         return emulators[reqId.id]
     else:
