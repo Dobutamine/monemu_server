@@ -1,15 +1,18 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+import random, json
 
-import random
 
 app = FastAPI()
 
 origins = [
     "http://localhost",
+    "ws://localhost",
     "http://localhost:8080",
     "http://localhost:8081",
+    "ws://localhost:8080",
+    "ws://localhost:8081",
     "http://monitoremulator.com",
     "http://monitoremulator.com:8080",
     "http://monitoremulator.com:8081",
@@ -106,10 +109,60 @@ yoda_object = {
     'alarmEnabled': True
 }
 
+print("testing1")
 
 emulators = {
     'YODA': yoda_object
 }
+
+@app.websocket("/ws_set")
+async def websocket_endpoint(websocket: WebSocket):
+    print('Accepting client connection...')
+    await websocket.accept()
+    while True:
+        try:
+            # wait for any message from the client in json form and converted it to a dictionary
+            received_message =  json.loads(await websocket.receive_json())
+            # send message to the client
+            message = { 'value': random.uniform(0, 1) }
+            await websocket.send_json(message)
+        except Exception as e:
+            print('error: ', e)
+            break
+    print('Bye')
+
+@app.websocket("/ws_get")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    while True:
+        try:
+            # wait for any message from the client in json form and converted it to a dictionary
+            received_message =  await websocket.receive_json()
+
+            if (received_message['command'] == 'close'):
+                await websocket.send_json("closing")
+
+            if received_message['id'] in emulators.keys():
+                await websocket.send_json(emulators[received_message['id']])
+
+
+
+
+            # received_message = json.loads(received_message)
+
+            # # check what the command is 
+            # if (received_message['command'] == 'close'):
+            #     break
+
+            # if received_message['id'] in emulators.keys():
+            #     await websocket.send_json(emulators[received_message['id']])
+
+            
+        except Exception as e:
+            print('error: ', e)
+            break
+    print('Bye')
+
 
 @app.post("/removeid")
 async def removeId(reqId: ReqIdModel):
