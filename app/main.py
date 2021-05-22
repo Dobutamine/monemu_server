@@ -31,7 +31,8 @@ app.add_middleware(
 )
 
 emulators = {
-    'YODA': {}
+    'YODA': {},
+    'LEIA': {}
 }
 
 registered_users = ['YODA', 'HAN', 'LEIA', 'LUKE', 'OBI-WAN', 'KYLO', 'R2-D2', 'C-3PO']
@@ -77,7 +78,7 @@ async def websocket_endpoint(websocket: WebSocket):
                     if received_message['id'] in emulators:
                         await websocket.send_json(emulators[received_message['id']])
                     else:
-                        await websocket.send_json('no data for this id')
+                        await websocket.send_json('bo data')
                 else:
                     await websocket.send_json('id not registered')
                 continue
