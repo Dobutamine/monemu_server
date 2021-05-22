@@ -74,7 +74,10 @@ async def websocket_endpoint(websocket: WebSocket):
 
             if (received_message['command'] == 'get'):
                 if received_message['id'] in registered_users:
-                    await websocket.send_json(emulators[received_message['id']])
+                    if received_message['id'] in emulators:
+                        await websocket.send_json(emulators[received_message['id']])
+                    else:
+                        await websocket.send_json('no data for this id')
                 else:
                     await websocket.send_json('id not registered')
                 continue
