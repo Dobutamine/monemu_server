@@ -152,7 +152,7 @@ emulators = {
 
 registered_users = ['YODA']
 
-@app.websocket("/ws_get")
+@app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     while True:
