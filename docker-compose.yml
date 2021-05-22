@@ -1,21 +1,21 @@
 version: '2'
 
 # development
-services:
-    quasar:
-        build:
-            context: . 
-            dockerfile: development.dockerfile
-        ports:
-            - '2340:2340'
-        volumes: 
-            - ./app:/app
-
-# production
 # services:
 #     quasar:
 #         build:
 #             context: . 
-#             dockerfile: production.dockerfile
+#             dockerfile: development.dockerfile
 #         ports:
 #             - '2340:2340'
+#         volumes: 
+#             - ./app:/app
+
+# production
+services:
+    quasar:
+        build:
+            context: . 
+            dockerfile: production.dockerfile
+        ports:
+            - '2340:2340'
