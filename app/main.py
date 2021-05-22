@@ -75,7 +75,10 @@ async def websocket_endpoint(websocket: WebSocket):
             if (received_message['command'] == 'get'):
                 if received_message['id'] in registered_users:
                     await websocket.send_json(emulators[received_message['id']])
+                else:
+                    await websocket.send_json('id not registered')
                 continue
+                
 
         except Exception as e:
             print('error: ', e)
