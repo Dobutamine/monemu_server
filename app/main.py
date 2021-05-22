@@ -109,27 +109,48 @@ yoda_object = {
     'alarmEnabled': True
 }
 
-print("testing1")
+empty_object = {
+    'id': '',
+    'error': '',
+    'heartrate': 120,
+    'satPre': 100,
+    'satPost': 96,
+    'satVen': 80,
+    'respRate': 35,
+    'etco2': 45,
+    'abpSyst': 70,
+    'abpDiast': 50,
+    'pfi': 1.2,
+    'temp': 37.1,
+    'cvp': 4,
+    'papSyst': 40,
+    'papDiast': 20,
+    'imageNo': 0,
+    'resusState': 0,
+    'rhythmType': 0,
+    'rhythmParameter': 0,
+    'curveSqueeze': 1,
+    'hrEnabled': True,
+    'satPreEnabled': True,
+    'satPostEnabled': True,
+    'satVenEnabled': False,
+    'abpEnabled': True,
+    'respRateEnabeld': True,
+    'etco2Enabled': True,
+    'tempEnabled': True,
+    'polsEnabled': True,
+    'pfiEnabled': True,
+    'nibdEnabled': False,
+    'cvpEnabled': False,
+    'papEnabled': False,
+    'alarmEnabled': True
+}
 
 emulators = {
     'YODA': yoda_object
 }
 
-@app.websocket("/ws_set")
-async def websocket_endpoint(websocket: WebSocket):
-    print('Accepting client connection...')
-    await websocket.accept()
-    while True:
-        try:
-            # wait for any message from the client in json form and converted it to a dictionary
-            received_message =  json.loads(await websocket.receive_json())
-            # send message to the client
-            message = { 'value': random.uniform(0, 1) }
-            await websocket.send_json(message)
-        except Exception as e:
-            print('error: ', e)
-            break
-    print('Bye')
+registered_users = ['YODA']
 
 @app.websocket("/ws_get")
 async def websocket_endpoint(websocket: WebSocket):
@@ -140,57 +161,34 @@ async def websocket_endpoint(websocket: WebSocket):
             received_message =  await websocket.receive_json()
 
             if (received_message['command'] == 'close'):
-                await websocket.send_json("closing")
+                await websocket.send_json("OK")
+                break
 
-            if received_message['id'] in emulators.keys():
-                await websocket.send_json(emulators[received_message['id']])
-
-
-
-
-            # received_message = json.loads(received_message)
-
-            # # check what the command is 
-            # if (received_message['command'] == 'close'):
-            #     break
-
-            # if received_message['id'] in emulators.keys():
-            #     await websocket.send_json(emulators[received_message['id']])
-
+            if (received_message['command'] == 'remove'):
+                if received_message['id'] in registered_users:
+                    del emulators[received_message['id']]
+                    await websocket.send_json("OK")
+                else:
+                    await websocket.send_json("id not found")
+                continue
             
+            if (received_message['command'] == 'register'):
+                if (received_message['id'] not in registered_users):
+                    registered_users.append(received_message['id'])
+                    await websocket.send_json("OK")
+                continue
+            
+            if (received_message['command'] == 'set'):
+                if received_message['id'] in registered_users:
+                    emulators[received_message['id']] = received_message
+                    await websocket.send_json("OK")
+                continue
+
+            if (received_message['command'] == 'get'):
+                if received_message['id'] in registered_users:
+                    await websocket.send_json(emulators[received_message['id']])
+                continue
+
         except Exception as e:
             print('error: ', e)
             break
-    print('Bye')
-
-
-@app.post("/removeid")
-async def removeId(reqId: ReqIdModel):
-    if reqId.id in emulators.keys():
-        del emulators[reqId.id]
-        return {"OK"}
-    else:
-        return {"error": "id not found"}
-
-@app.post("/regid")
-async def regId(regId: ReqIdModel):
-    emulators[regId.id] =  DataModel()
-    print("registrating new id: ", regId.id)
-    return {"OK"}
-
-@app.post("/getdata")
-async def getdata(reqId: ReqIdModel):
-    if reqId.id in emulators.keys():
-        return emulators[reqId.id]
-    else:
-        print("requesting data not found for id: ", reqId.id)
-        return {"error": "id not found"}
-
-@app.post("/setdata")
-async def setdata(newdata: DataModel):
-    if newdata.id in emulators.keys():
-        emulators[newdata.id] = newdata
-        return {"OK"}
-    else:
-        print("error setting new data for id: ", newdata.id)
-        return { "error": "id not found"}
