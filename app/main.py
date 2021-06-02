@@ -38,9 +38,10 @@ emulators = {
 
 registered_users = ['YODA', 'HAN', 'LEIA', 'LUKE', 'OBI-WAN', 'KYLO', 'R2-D2', 'C-3PO']
 
-@app.get("/library")
-def image():
-    return FileResponse("library/pneumothorax_right.png")
+@app.get("/images/{image_name}")
+def image(image_name):
+    image_path = "app/images/{}.png".format(image_name)
+    return FileResponse(image_path)
 
 
 
