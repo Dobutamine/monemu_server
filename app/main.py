@@ -1,4 +1,5 @@
 from fastapi import FastAPI, WebSocket
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -36,6 +37,12 @@ emulators = {
 }
 
 registered_users = ['YODA', 'HAN', 'LEIA', 'LUKE', 'OBI-WAN', 'KYLO', 'R2-D2', 'C-3PO']
+
+@app.get("/library")
+def image():
+    return FileResponse("library/pneumothorax_right.png")
+
+
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
