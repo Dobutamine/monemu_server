@@ -18,4 +18,4 @@ services:
             context: . 
             dockerfile: production.dockerfile
         ports:
-            - '80:80'
+            - '8081:8081'
